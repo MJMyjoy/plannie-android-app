@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
 
         // Plannie logo icon
         val logoView = ImageView(this).apply {
-            setImageResource(R.mipmap.ic_launcher)
+            setImageResource(R.drawable.ic_launcher_foreground)
             val size = (120 * resources.displayMetrics.density).toInt()
             layoutParams = LinearLayout.LayoutParams(size, size).apply {
                 gravity = android.view.Gravity.CENTER_HORIZONTAL

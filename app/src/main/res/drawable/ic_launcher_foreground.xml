@@ -6,13 +6,13 @@
     <!-- Right leaf -->
     <path
         android:fillColor="#2E7D32"
-        android:pathData="M54,78 C54,48 72,24 92,10 C76,26 66,48 63,74 Z"
-        android:fillAlpha="0.9"/>
+        android:fillAlpha="0.9"
+        android:pathData="M54,78 C54,48 72,24 92,10 C76,26 66,48 63,74 Z"/>
     <!-- Left leaf -->
     <path
         android:fillColor="#4CAF50"
-        android:pathData="M54,78 C54,48 36,24 16,10 C32,26 42,48 45,74 Z"
-        android:fillAlpha="0.8"/>
+        android:fillAlpha="0.8"
+        android:pathData="M54,78 C54,48 36,24 16,10 C32,26 42,48 45,74 Z"/>
     <!-- Stem -->
     <path
         android:fillColor="#2E7D32"
@@ -20,23 +20,20 @@
     <!-- Dollar circle -->
     <path
         android:fillColor="#66BB6A"
-        android:pathData="M76,34 m-12,0 a12,12 0 1,0 24,0 a12,12 0 1,0 -24,0"
-        android:fillAlpha="0.6"/>
-    <!-- Dollar sign -->
+        android:fillAlpha="0.6"
+        android:pathData="M76,34 m-12,0 a12,12 0,1,0 24,0 a12,12 0,1,0 -24,0"/>
+    <!-- Dollar sign S -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M76,26 L76,28 M73,30 Q73,28 76,28 Q79,28 79,30 Q79,32 76,32 Q73,32 73,34 Q73,36 76,36 Q79,36 79,34 M76,36 L76,38"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="1.5"
-        android:fillAlpha="0"/>
+        android:pathData="M76,26 L76,28 C73,28 71,29.5 71,31 C71,32.5 73,33 76,33 C79,33 81,34.5 81,36.5 C81,38.5 79,40 76,40 L76,42 M76,40 L76,42 M76,26 L76,28"/>
     <!-- Bar chart left -->
     <path
         android:fillColor="#A5D6A7"
-        android:pathData="M24,66 L30,66 Q31.5,66 31.5,67.5 L31.5,82 Q31.5,83.5 30,83.5 L24,83.5 Q22.5,83.5 22.5,82 L22.5,67.5 Q22.5,66 24,66 Z"
-        android:fillAlpha="0.5"/>
+        android:fillAlpha="0.5"
+        android:pathData="M23,68 L29,68 C30,68 31,69 31,70 L31,82 C31,83 30,84 29,84 L23,84 C22,84 21,83 21,82 L21,70 C21,69 22,68 23,68 Z"/>
     <!-- Bar chart right -->
     <path
         android:fillColor="#81C784"
-        android:pathData="M34,58 L40,58 Q41.5,58 41.5,59.5 L41.5,82 Q41.5,83.5 40,83.5 L34,83.5 Q32.5,83.5 32.5,82 L32.5,59.5 Q32.5,58 34,58 Z"
-        android:fillAlpha="0.5"/>
+        android:fillAlpha="0.5"
+        android:pathData="M34,60 L40,60 C41,60 42,61 42,62 L42,82 C42,83 41,84 40,84 L34,84 C33,84 32,83 32,82 L32,62 C32,61 33,60 34,60 Z"/>
 </vector>
