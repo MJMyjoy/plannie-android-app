@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Plannie" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/plannie_green_800</item>
+        <item name="android:navigationBarColor">@color/plannie_green_50</item>
+        <item name="android:windowBackground">@color/plannie_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 
-    <style name="Theme.Plannie" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Plannie.Splash" parent="Theme.Plannie">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/splash_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>

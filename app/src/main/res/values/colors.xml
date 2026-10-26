@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="plannie_green_900">#FF1B5E20</color>
+    <color name="plannie_green_800">#FF2E7D32</color>
+    <color name="plannie_green_700">#FF388E3C</color>
+    <color name="plannie_green_600">#FF43A047</color>
+    <color name="plannie_green_500">#FF4CAF50</color>
+    <color name="plannie_green_400">#FF66BB6A</color>
+    <color name="plannie_green_300">#FF81C784</color>
+    <color name="plannie_green_200">#FFA5D6A7</color>
+    <color name="plannie_green_100">#FFC8E6C9</color>
+    <color name="plannie_green_50">#FFE8F5E9</color>
+    <color name="plannie_bg">#FFF6F9F6</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="splash_bg">#FFE8F5E9</color>
 </resources>
