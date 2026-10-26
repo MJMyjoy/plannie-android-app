@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Plannie</title>
+    <style>
+        /* ============ VARIABLES ============ */
+        :root {
+            --g900:#1B5E20; --g800:#2E7D32; --g700:#388E3C; --g600:#43A047;
+            --g500:#4CAF50; --g400:#66BB6A; --g300:#81C784; --g200:#A5D6A7;
+            --g100:#C8E6C9; --g50:#E8F5E9;
+            --bg:#F6F9F6; --card:#FFFFFF; --text:#1A1A1A; --text2:#5F6368;
+            --border:#D0D5D0; --gold:#F9A825; --gold-bg:#FFF8E1;
+            --orange:#EF6C00; --orange-bg:#FFF3E0;
+            --red:#C62828; --red-bg:#FFEBEE;
+            --shadow:0 2px 12px rgba(0,0,0,.08);
+            --shadow-lg:0 8px 30px rgba(0,0,0,.12);
+            --r:14px; --tr:.3s cubic-bezier(.4,0,.2,1);
+        }
+
+        /* ============ RESET & BASE ============ */
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+        body{
+            font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+            background:var(--bg);color:var(--text);
+            min-height:100vh;display:flex;flex-direction:column;align-items:center;
+            overscroll-behavior-y:contain;
+            padding-top:env(safe-area-inset-top);
+            padding-bottom:env(safe-area-inset-bottom);
+        }
+        #app{
+            width:100%;max-width:520px;padding:24px 18px 100px;flex:1;
+            display:flex;flex-direction:column;align-items:center;
+        }
+
+        /* ============ LOGO ============ */
+        .logo{display:flex;flex-direction:column;align-items:center;margin-bottom:26px;animation:fadeIn .8s ease}
+        .logo svg{width:72px;height:72px;margin-bottom:8px}
+        .logo-text{font-size:30px;font-weight:700;color:var(--g800);letter-spacing:-.5px}
+        .logo-sub{font-size:13px;color:var(--text2);margin-top:2px}
+
+        /* ============ BUTTONS ============ */
+        .btn{
+            display:inline-flex;align-items:center;justify-content:center;
+            padding:15px 32px;border:none;border-radius:var(--r);
+            font-size:16px;font-weight:600;cursor:pointer;
+            transition:all var(--tr);outline:none;font-family:inherit;
+            -webkit-tap-highlight-color:transparent;
+            touch-action:manipulation;
+        }
+        .btn-primary{background:var(--g800);color:#fff;box-shadow:0 4px 14px rgba(46,125,50,.3)}
+        .btn-primary:active{background:var(--g900);transform:scale(.97)}
+
+        .btn-secondary{background:var(--g50);color:var(--g800);border:1.5px solid var(--g200)}
+        .btn-secondary:active{background:var(--g100);border-color:var(--g500)}
+
+        .btn-check{
+            width:46px;height:46px;padding:0;border-radius:50%;font-size:18px;
+            background:var(--g800);color:#fff;border:none;cursor:pointer;
+            transition:all var(--tr);display:inline-flex;align-items:center;justify-content:center;
+            box-shadow:0 3px 10px rgba(46,125,50,.25);flex-shrink:0;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-check:active{background:var(--g900);transform:scale(.9)}
+
+        .btn-product{
+            width:100%;padding:17px 20px;background:var(--card);
+            border:1.5px solid var(--g200);border-radius:var(--r);
+            font-size:16px;font-weight:500;color:var(--text);cursor:pointer;
+            transition:all var(--tr);text-align:left;
+            display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-product:active{border-color:var(--g500);box-shadow:var(--shadow);background:var(--g50)}
+        .btn-product.active{border-color:var(--g500);background:var(--g50)}
+        .btn-product.dimmed{opacity:.45;pointer-events:none}
+        .btn-product.depleted{opacity:.4;cursor:not-allowed;pointer-events:none}
+        .btn-product .stock{
+            font-size:12px;color:var(--text2);background:var(--g50);
+            padding:4px 12px;border-radius:20px;font-weight:600;
+        }
+        .btn-product.depleted .stock{background:var(--red-bg);color:var(--red)}
+
+        .btn-end{
+            width:100%;padding:17px;margin-top:20px;
+            background:linear-gradient(135deg,var(--g800),var(--g600));
+            color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:600;
+            cursor:pointer;transition:all var(--tr);
+            box-shadow:0 4px 14px rgba(46,125,50,.3);font-family:inherit;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-end:active{box-shadow:0 2px 8px rgba(46,125,50,.2);transform:scale(.98)}
+
+        .btn-restock{
+            padding:13px 20px;
+            background:linear-gradient(135deg,var(--g800),var(--g600));
+            color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;
+            cursor:pointer;transition:all var(--tr);
+            box-shadow:0 4px 14px rgba(46,125,50,.3);font-family:inherit;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-restock:active{transform:scale(.97)}
+
+        /* ============ INPUTS ============ */
+        .input-group{margin-bottom:22px;width:100%}
+        .input-label{font-size:14px;font-weight:500;color:var(--text2);margin-bottom:8px;display:block}
+        .input-field{
+            width:100%;padding:12px 2px;border:none;border-bottom:2.5px solid var(--border);
+            background:transparent;font-size:18px;font-family:inherit;color:var(--text);
+            transition:border-color var(--tr);outline:none;
+            -webkit-appearance:none;appearance:none;border-radius:0;
+        }
+        .input-field:focus{border-bottom-color:var(--g800)}
+        .input-field::placeholder{color:#bbb}
+        .input-inline{display:flex;align-items:center;gap:10px;width:100%}
+        .input-inline .input-field{flex:1}
+        .input-suffix{font-size:16px;font-weight:600;color:var(--text2);white-space:nowrap}
+
+        /* ============ CARDS ============ */
+        .card{width:100%;background:var(--card);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+
+        /* ============ ANIMATIONS ============ */
+        .plannie-effect{animation:plannieSlide .5s ease-out forwards}
+        @keyframes plannieSlide{
+            0%{opacity:0;transform:translateY(-15px)}
+            100%{opacity:1;transform:translateY(0)}
+        }
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .fade-in{animation:fadeIn .6s ease}
+        .scale-in{animation:scaleIn .4s ease}
+        .slide-up{animation:slideUp .5s ease}
+
+        /* ============ COUNTER ============ */
+        .product-counter{
+            font-size:14px;color:var(--g800);font-weight:600;
+            margin-bottom:20px;text-align:center;
+        }
+        .progress-bar{
+            width:100%;height:5px;background:var(--g100);border-radius:3px;margin-bottom:24px;overflow:hidden;
+        }
+        .progress-fill{height:100%;background:var(--g800);border-radius:3px;transition:width .4s ease}
+
+        /* ============ TOAST ============ */
+        #toast-container{
+            position:fixed;top:20px;left:50%;transform:translateX(-50%);
+            z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;
+            width:90%;max-width:400px;
+        }
+        .toast{
+            background:var(--g800);color:#fff;padding:15px 20px;border-radius:var(--r);
+            font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);
+            animation:toastIn .3s ease,toastOut .3s ease 2.7s forwards;
+            text-align:center;
+        }
+        .toast.loss{background:var(--orange)}
+        .toast.info{background:#1565C0}
+        @keyframes toastIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+
+        /* ============ CANCEL OVERLAY ============ */
+        #cancel-overlay{
+            position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10000;
+            display:none;flex-direction:column;align-items:center;gap:10px;
+            width:90%;max-width:400px;
+        }
+        #cancel-overlay.show{display:flex;animation:toastIn .3s ease}
+        .cancel-card{
+            background:var(--orange);color:#fff;padding:16px 20px 12px;border-radius:var(--r);
+            box-shadow:var(--shadow-lg);text-align:center;width:100%;
+        }
+        .cancel-card .cancel-msg{font-size:14px;font-weight:500;margin-bottom:14px}
+        .btn-cancel{
+            padding:12px 28px;background:rgba(255,255,255,.15);color:#fff;
+            border:3px solid #fff;border-radius:10px;font-size:15px;font-weight:700;
+            cursor:pointer;font-family:inherit;transition:transform .15s;
+            animation:borderErase 10s linear forwards;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-cancel:active{transform:scale(.95)}
+        @keyframes borderErase{
+            0%{border-color:rgba(255,255,255,1);box-shadow:0 0 8px rgba(255,255,255,.3)}
+            50%{border-color:rgba(255,255,255,.5);box-shadow:0 0 4px rgba(255,255,255,.15)}
+            90%{border-color:rgba(255,255,255,.1);box-shadow:none}
+            100%{border-color:transparent;opacity:.3}
+        }
+        .cancel-timer{
+            width:100%;height:3px;background:rgba(255,255,255,.25);
+            border-radius:2px;margin-top:10px;overflow:hidden;
+        }
+        .cancel-timer-fill{
+            height:100%;background:#fff;border-radius:2px;
+            animation:timerShrink 10s linear forwards;
+        }
+        @keyframes timerShrink{from{width:100%}to{width:0%}}
+
+        /* ============ SELLING ============ */
+        .sell-line{
+            display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+            font-size:15px;padding:14px 0;line-height:2.2;
+        }
+        .sell-line .input-field{width:55px;text-align:center;font-size:16px;padding:8px 2px}
+        .sell-line .input-field.price-input{width:90px}
+
+        /* ============ REPORT ============ */
+        .report-section{width:100%;animation:fadeIn .8s ease}
+        .report-title{font-size:22px;font-weight:700;color:var(--g800);text-align:center;margin-bottom:24px}
+        .report-card{
+            width:100%;border-radius:var(--r);padding:18px 20px;margin-bottom:12px;
+            animation:slideUp .5s ease backwards;
+        }
+        .report-card .label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+        .report-card .value{font-size:20px;font-weight:700}
+        .report-card .detail{font-size:13px;margin-top:4px;opacity:.85}
+        .report-caisse{background:var(--g800);color:#fff}
+        .report-vert{background:var(--g50);color:var(--g900);border-left:4px solid var(--g800)}
+        .report-dore{background:var(--gold-bg);color:#6D4C00;border-left:4px solid var(--gold)}
+        .report-orange{background:var(--orange-bg);color:#BF360C;border-left:4px solid var(--orange)}
+        .report-rouge{background:var(--red-bg);color:var(--red);border-left:4px solid var(--red)}
+        .report-none{background:#F5F5F5;color:var(--text2);border-left:4px solid #BDBDBD}
+
+        /* ============ CONFIRM ============ */
+        .confirm-section{display:flex;gap:10px;margin-top:16px}
+        .confirm-section .btn{flex:1}
+
+        /* ============ MENU HEADER ============ */
+        .menu-header{
+            width:100%;display:flex;justify-content:flex-end;margin-bottom:14px;
+        }
+
+        /* ============ FOOTER ============ */
+        footer{
+            width:100%;text-align:center;padding:20px;font-size:13px;
+            color:var(--text2);border-top:1px solid var(--g100);background:var(--g50);
+        }
+
+        /* ============ HELPERS ============ */
+        .section{width:100%;display:flex;flex-direction:column;align-items:center}
+        .section-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:55vh}
+        .text-center{text-align:center}
+        .mt-20{margin-top:20px}
+        .w-full{width:100%}
+        .btn-right{display:flex;justify-content:flex-end;width:100%;margin-top:16px}
+
+        /* ============ MOBILE OPTIMIZATIONS ============ */
+        .sell-line .input-field{font-size:16px}
+        .sell-line .input-field.price-input{width:85px}
+        .logo svg{width:64px;height:64px}
+        .logo-text{font-size:26px}
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar{width:4px}
+        ::-webkit-scrollbar-thumb{background:var(--g200);border-radius:4px}
+
+        /* Prevent zoom on inputs */
+        input[type="number"],input[type="text"]{font-size:16px !important}
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+<footer>© Plannie 2026 by Havila</footer>
+<div id="toast-container"></div>
+<div id="cancel-overlay"></div>
+
+<script>
+// ================================================================
+//  PLANNIE — Application de gestion commerciale (Android)
+//  © 2026 Havila
+// ================================================================
+
+const STORAGE_KEY = 'plannie_state';
+const app = document.getElementById('app');
+
+// ---- Inline SVG Logo ----
+const LOGO_SVG = `
+<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 58 C40 38, 54 18, 70 8 C58 20, 50 36, 48 56 Z" fill="#2E7D32" opacity=".9"/>
+  <path d="M40 58 C40 38, 26 18, 10 8 C22 20, 30 36, 32 56 Z" fill="#4CAF50" opacity=".8"/>
+  <rect x="38" y="56" width="4" height="16" rx="2" fill="#2E7D32"/>
+  <circle cx="58" cy="26" r="9" fill="#66BB6A" opacity=".55"/>
+  <text x="54.5" y="31" font-size="13" font-weight="bold" fill="#fff" font-family="sans-serif">$</text>
+  <rect x="14" y="50" width="6" height="12" rx="1.5" fill="#A5D6A7" opacity=".5"/>
+  <rect x="22" y="44" width="6" height="18" rx="1.5" fill="#81C784" opacity=".5"/>
+</svg>`;
+
+// ================================================================
+//  STATE MANAGEMENT
+// ================================================================
+function freshState() {
+    return { phase:'welcome', productCount:0, currentIndex:0, products:[], sales:{}, restocks:[] };
+}
+
+function migrateState(d) {
+    if (!d.restocks) d.restocks = [];
+    if (d.products) {
+        d.products.forEach((p, i) => {
+            if (!p.batches) {
+                p.batches = [{ quantity: p.quantity, unitPrice: p.unitPrice, purchasePrice: p.purchasePrice }];
+            }
+            const sales = d.sales[i] || [];
+            sales.forEach(s => {
+                if (!s.batchConsumptions) {
+                    s.batchConsumptions = [{ batchIdx: 0, qty: s.quantity, unitPrice: p.batches[0].unitPrice }];
+                }
+            });
+        });
+    }
+    return d;
+}
+
+function loadState() {
+    try {
+        const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (d && Array.isArray(d.products) && d.products.length >= 0) return migrateState(d);
+    } catch(_){}
+    return null;
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); }
+function clearState() { localStorage.removeItem(STORAGE_KEY); }
+
+let S = loadState() || freshState();
+
+// ================================================================
+//  UTILITIES
+// ================================================================
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function formatFC(n) { return Number(n).toLocaleString('fr-FR') + ' FC'; }
+function formatPct(v) { return (v>=0?'+':'') + v.toFixed(1) + '%'; }
+
+function showToast(msg, type='success') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    const cls = type==='loss' ? ' loss' : type==='info' ? ' info' : '';
+    t.className = 'toast' + cls;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(()=>t.remove(), 3200);
+}
+
+// ================================================================
+//  FIFO HELPERS
+// ================================================================
+function getBatchSold(pIdx, bIdx) {
+    const sales = S.sales[pIdx] || [];
+    let sold = 0;
+    sales.forEach(s => {
+        if (s.batchConsumptions) {
+            s.batchConsumptions.forEach(bc => {
+                if (bc.batchIdx === bIdx) sold += bc.qty;
+            });
+        }
+    });
+    return sold;
+}
+
+function getBatchRemaining(pIdx, bIdx) {
+    return S.products[pIdx].batches[bIdx].quantity - getBatchSold(pIdx, bIdx);
+}
+
+function consumeFIFO(pIdx, qtyToSell) {
+    const p = S.products[pIdx];
+    const consumptions = [];
+    let remaining = qtyToSell;
+    for (let b = 0; b < p.batches.length && remaining > 0; b++) {
+        const batchRem = getBatchRemaining(pIdx, b);
+        const take = Math.min(remaining, batchRem);
+        if (take > 0) {
+            consumptions.push({ batchIdx: b, qty: take, unitPrice: p.batches[b].unitPrice });
+            remaining -= take;
+        }
+    }
+    return consumptions;
+}
+
+function stats(i) {
+    const p = S.products[i], sl = S.sales[i] || [];
+    let rev = 0, qtySold = 0, totalCost = 0;
+    sl.forEach(s => {
+        rev += s.price;
+        qtySold += s.quantity;
+        if (s.batchConsumptions) {
+            s.batchConsumptions.forEach(bc => { totalCost += bc.qty * bc.unitPrice; });
+        } else {
+            totalCost += s.quantity * p.batches[0].unitPrice;
+        }
+    });
+    const totalQuantity = p.batches.reduce((s, b) => s + b.quantity, 0);
+    const gain = rev - totalCost;
+    const pct = totalCost > 0 ? (gain / totalCost) * 100 : 0;
+    return { rev, qtySold, cost: totalCost, gain, pct, remaining: totalQuantity - qtySold };
+}
+
+// ================================================================
+//  CANCEL SALE LOGIC
+// ================================================================
+let _cancelTimer = null;
+
+function showCancelOverlay(msg, productIdx, saleIndex) {
+    clearCancelOverlay();
+    const ov = document.getElementById('cancel-overlay');
+    ov.innerHTML = `
+        <div class="cancel-card">
+            <div class="cancel-msg">${msg}</div>
+            <button class="btn-cancel" id="btnCancelSale">❌ Annuler cette vente</button>
+            <div class="cancel-timer"><div class="cancel-timer-fill"></div></div>
+        </div>`;
+    ov.classList.add('show');
+
+    document.getElementById('btnCancelSale').onclick = () => {
+        const sales = S.sales[productIdx];
+        if (sales && saleIndex >= 0 && saleIndex < sales.length) {
+            sales.splice(saleIndex, 1);
+            saveState();
+            showToast('Vente annulée avec succès !');
+            clearCancelOverlay();
+            _sellingIdx = null;
+            renderMainMenu();
+        }
+    };
+
+    _cancelTimer = setTimeout(() => {
+        clearCancelOverlay();
+    }, 10000);
+}
+
+function clearCancelOverlay() {
+    if (_cancelTimer) { clearTimeout(_cancelTimer); _cancelTimer = null; }
+    const ov = document.getElementById('cancel-overlay');
+    ov.classList.remove('show');
+    ov.innerHTML = '';
+}
+
+// ================================================================
+//  RENDER ENGINE
+// ================================================================
+function render() {
+    clearCancelOverlay();
+    switch(S.phase) {
+        case 'welcome':       renderWelcome(); break;
+        case 'askCount':      renderAskCount(); break;
+        case 'enterProducts': renderEnterProducts(); break;
+        case 'mainMenu':      renderMainMenu(); break;
+        case 'report':        renderReport(); break;
+        default:              renderWelcome();
+    }
+}
+
+// ---- Welcome ----
+function renderWelcome() {
+    app.innerHTML = `
+        <div class="section section-center">
+            <div class="logo">${LOGO_SVG}<div class="logo-text">Plannie</div>
+                <div class="logo-sub">Votre assistant commercial intelligent</div>
+            </div>
+            <button class="btn btn-primary scale-in" id="bs" style="animation-delay:.3s">
+                🌿&nbsp; Démarrer la journée
+            </button>
+        </div>`;
+    document.getElementById('bs').onclick = () => { S.phase='askCount'; render(); };
+}
+
+// ---- Ask Count ----
+function renderAskCount() {
+    app.innerHTML = `
+        <div class="section section-center">
+            <div class="logo">${LOGO_SVG}<div class="logo-text">Plannie</div></div>
+            <div class="plannie-effect" style="width:100%;text-align:center;margin-top:20px">
+                <p style="font-size:18px;margin-bottom:24px;color:var(--text2)">
+                    Combien d'articles pour aujourd'hui&nbsp;?
+                </p>
+                <div class="input-inline" style="justify-content:center;max-width:200px;margin:0 auto">
+                    <input type="number" class="input-field" id="ci" min="1" max="50"
+                           placeholder="Ex: 5" style="text-align:center;font-size:24px" inputmode="numeric">
+                    <button class="btn-check" id="cb" style="display:none">✓</button>
+                </div>
+            </div>
+        </div>`;
+    const inp = document.getElementById('ci'), btn = document.getElementById('cb');
+    inp.focus();
+    inp.oninput = () => { btn.style.display = inp.value && +inp.value>0 ? 'inline-flex':'none'; };
+    btn.onclick = () => {
+        const n = parseInt(inp.value);
+        if(!n||n<1) return;
+        S.productCount=n; S.currentIndex=0; S.products=[]; S.sales={}; S.restocks=[];
+        S.phase='enterProducts'; saveState(); render();
+    };
+    inp.onkeydown = e => { if(e.key==='Enter') btn.click(); };
+}
+
+// ---- Enter Products ----
+function renderEnterProducts() {
+    const i = S.currentIndex, last = i===S.productCount-1;
+    const ex = S.products[i] || {};
+    const pct = ((i)/S.productCount)*100;
+
+    app.innerHTML = `
+        <div class="section">
+            <div class="logo" style="margin-bottom:12px">${LOGO_SVG}
+                <div class="logo-text" style="font-size:24px">Plannie</div>
+            </div>
+            <div class="product-counter">Article ${i+1} sur ${S.productCount}</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+            <div class="card plannie-effect">
+                <div class="input-group">
+                    <label class="input-label">Entrez le nom de l'article</label>
+                    <input type="text" class="input-field" id="pn" placeholder="Ex : Chaussures Nike"
+                           value="${esc(ex.name||'')}">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Combien de pièces pour cet article ?</label>
+                    <input type="number" class="input-field" id="pq" placeholder="Ex : 10" min="1"
+                           value="${ex.quantity||''}" inputmode="numeric">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Combien ça vous a coûté ?</label>
+                    <div class="input-inline">
+                        <input type="number" class="input-field" id="pp" placeholder="Ex : 50000" min="0"
+                               value="${ex.purchasePrice||''}" inputmode="numeric">
+                        <span class="input-suffix">FC</span>
+                    </div>
+                </div>
+                <div class="btn-right">
+                    <button class="btn btn-primary" id="bn">${last?'✅ Terminer':'Suivant →'}</button>
+                </div>
+            </div>
+        </div>`;
+
+    document.getElementById('pn').focus();
+
+    document.getElementById('bn').onclick = () => {
+        const name  = document.getElementById('pn').value.trim();
+        const qty   = parseInt(document.getElementById('pq').value);
+        const price = parseFloat(document.getElementById('pp').value);
+        if(!name){ showToast("Veuillez entrer le nom de l'article",'loss'); return; }
+        if(!qty||qty<1){ showToast("Veuillez entrer une quantité valide",'loss'); return; }
+        if(isNaN(price)||price<0){ showToast("Veuillez entrer un prix valide",'loss'); return; }
+
+        const unitPrice = price / qty;
+        S.products[i] = {
+            name, quantity: qty, purchasePrice: price, unitPrice,
+            batches: [{ quantity: qty, unitPrice, purchasePrice: price }]
+        };
+        if(!S.sales[i]) S.sales[i] = [];
+
+        if(last){
+            S.phase='mainMenu'; S.currentIndex=0;
+            saveState(); showToast('Tous les articles ont été enregistrés !'); render();
+        } else {
+            S.currentIndex = i+1; saveState(); render();
+        }
+    };
+
+    ['pn','pq','pp'].forEach((id,idx,arr)=>{
+        document.getElementById(id).onkeydown = e => {
+            if(e.key==='Enter'){
+                if(idx<arr.length-1) document.getElementById(arr[idx+1]).focus();
+                else document.getElementById('bn').click();
+            }
+        };
+    });
+}
+
+// ================================================================
+//  MAIN MENU
+// ================================================================
+let _sellingIdx = null, _confirming = false;
+let _restockMode = false, _restockingIdx = null, _addingNewInRestock = false;
+
+function renderMainMenu() {
+    if (_restockMode) {
+        renderRestockView();
+        return;
+    }
+
+    let items = '';
+    S.products.forEach((p,i)=>{
+        const st = stats(i), dep = st.remaining<=0;
+        const isSelling = _sellingIdx===i;
+        const isDimmed  = _sellingIdx!==null && !isSelling;
+        const cls = [
+            'btn-product',
+            dep?'depleted':'',
+            isSelling?'active':'',
+            isDimmed?'dimmed':''
+        ].filter(Boolean).join(' ');
+
+        items += `<button class="${cls}" data-idx="${i}"
+                    style="animation:slideUp .4s ease ${i*.07}s backwards"
+                    ${dep||isDimmed?'disabled':''}>
+                    <span>${esc(p.name)}</span>
+                    <span class="stock">${dep?'Épuisé':st.remaining+' pcs'}</span>
+                  </button>`;
+
+        if(isSelling){
+            items += `
+            <div class="card plannie-effect" style="margin-bottom:14px;border-left:4px solid var(--g500)">
+                <div class="sell-line">
+                    <span>Je viens de vendre</span>
+                    <input type="number" class="input-field" id="sq" value="1" min="1" max="${st.remaining}" inputmode="numeric">
+                    <span>pièce(s) de <strong>${esc(p.name)}</strong> à</span>
+                    <input type="number" class="input-field price-input" id="sp" placeholder="Prix" inputmode="numeric">
+                    <span class="input-suffix">FC</span>
+                    <button class="btn-check" id="sv">✓</button>
+                </div>
+            </div>`;
+        }
+    });
+
+    let confirmHTML = '';
+    if(_confirming){
+        confirmHTML = `
+        <div class="plannie-effect" style="width:100%;margin-top:10px">
+            <div class="card" style="text-align:center;border:2px solid var(--g500)">
+                <p style="font-size:16px;margin-bottom:16px">Êtes-vous sûr(e) de vouloir terminer la journée ?</p>
+                <div class="confirm-section">
+                    <button class="btn btn-primary" id="cy">✅ Confirmer</button>
+                    <button class="btn btn-secondary" id="cn">Annuler</button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    app.innerHTML = `
+        <div class="section">
+            <div class="logo">${LOGO_SVG}<div class="logo-text">Plannie</div></div>
+            <div class="menu-header">
+                <button class="btn-restock" id="bRestock">📦&nbsp; Approvisionner</button>
+            </div>
+            <div class="w-full">${items}</div>
+            <button class="btn-end" id="be">🌙&nbsp; Fin de la journée</button>
+            ${confirmHTML}
+        </div>`;
+
+    // ---- Event wiring ----
+    document.getElementById('bRestock').onclick = () => {
+        _sellingIdx = null;
+        _confirming = false;
+        _restockMode = true;
+        _restockingIdx = null;
+        _addingNewInRestock = false;
+        showToast("ℹ️ L'argent dépensé pour l'approvisionnement n'est pas retiré de la caisse de la journée.", 'info');
+        renderMainMenu();
+    };
+
+    document.querySelectorAll('.btn-product:not(.depleted):not(.dimmed)').forEach(b=>{
+        b.onclick = () => {
+            const idx = parseInt(b.dataset.idx);
+            _confirming = false;
+            clearCancelOverlay();
+            _sellingIdx = (_sellingIdx===idx) ? null : idx;
+            renderMainMenu();
+        };
+    });
+
+    if(_sellingIdx !== null){
+        const spEl = document.getElementById('sp');
+        if(spEl) spEl.focus();
+
+        const svBtn = document.getElementById('sv');
+        if(svBtn) svBtn.onclick = () => {
+            const idx   = _sellingIdx;
+            const qty   = parseInt(document.getElementById('sq').value);
+            const price = parseFloat(document.getElementById('sp').value);
+            const st    = stats(idx);
+
+            if(!qty||qty<1){ showToast('Quantité invalide','loss'); return; }
+            if(qty>st.remaining){ showToast(`Stock insuffisant (${st.remaining} pièce(s) restante(s))`,'loss'); return; }
+            if(isNaN(price)||price<0){ showToast('Veuillez entrer un prix de vente','loss'); return; }
+
+            const batchConsumptions = consumeFIFO(idx, qty);
+            const sale = { quantity: qty, price, batchConsumptions };
+            S.sales[idx].push(sale);
+            saveState();
+
+            const cost = batchConsumptions.reduce((s, bc) => s + bc.qty * bc.unitPrice, 0);
+            const gain = price - cost;
+            const pct  = cost > 0 ? (gain/cost)*100 : 0;
+
+            if(gain >= 0){
+                showToast(`Vente enregistrée ! Gain : +${formatFC(gain)} (${formatPct(pct)})`);
+            } else {
+                const saleIndex = S.sales[idx].length - 1;
+                showCancelOverlay(
+                    `⚠️ Vente à perte : ${formatFC(gain)} (${formatPct(pct)})`,
+                    idx, saleIndex
+                );
+            }
+
+            _sellingIdx = null;
+            renderMainMenu();
+        };
+
+        const sqEl = document.getElementById('sq');
+        if(sqEl) sqEl.onkeydown = e => { if(e.key==='Enter' && spEl) spEl.focus(); };
+        if(spEl) spEl.onkeydown = e => { if(e.key==='Enter' && svBtn) svBtn.click(); };
+    }
+
+    document.getElementById('be').onclick = () => {
+        _sellingIdx = null;
+        clearCancelOverlay();
+        _confirming = true;
+        renderMainMenu();
+    };
+
+    if(_confirming){
+        document.getElementById('cy').onclick = () => {
+            _confirming = false;
+            S.phase = 'report';
+            render();
+        };
+        document.getElementById('cn').onclick = () => {
+            _confirming = false;
+            renderMainMenu();
+        };
+    }
+}
+
+// ================================================================
+//  RESTOCK VIEW
+// ================================================================
+function renderRestockView() {
+    let items = '';
+
+    if (_addingNewInRestock) {
+        items = `
+        <div class="card plannie-effect">
+            <div style="text-align:center;font-size:14px;color:var(--g800);font-weight:600;margin-bottom:16px">
+                Nouvel article
+            </div>
+            <div class="input-group">
+                <label class="input-label">Nom de l'article</label>
+                <input type="text" class="input-field" id="rn" placeholder="Ex : Bijoux">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Combien de pièces ?</label>
+                <input type="number" class="input-field" id="rq" placeholder="Ex : 10" min="1" inputmode="numeric">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Combien ça vous a coûté ?</label>
+                <div class="input-inline">
+                    <input type="number" class="input-field" id="rp" placeholder="Ex : 30000" min="0" inputmode="numeric">
+                    <span class="input-suffix">FC</span>
+                </div>
+            </div>
+            <div class="btn-right">
+                <button class="btn btn-primary" id="rnv">✅ Ajouter</button>
+            </div>
+        </div>`;
+    } else {
+        S.products.forEach((p, i) => {
+            const isRestocking = _restockingIdx === i;
+            const isDimmed = _restockingIdx !== null && !isRestocking;
+            const cls = ['btn-product', isRestocking ? 'active' : '', isDimmed ? 'dimmed' : ''].filter(Boolean).join(' ');
+            const st = stats(i);
+
+            items += `<button class="${cls}" data-ridx="${i}"
+                        style="animation:slideUp .4s ease ${i * .07}s backwards"
+                        ${isDimmed ? 'disabled' : ''}>
+                        <span>${esc(p.name)}</span>
+                        <span class="stock">${st.remaining} pcs</span>
+                      </button>`;
+
+            if (isRestocking) {
+                items += `
+                <div class="card plannie-effect" style="margin-bottom:14px;border-left:4px solid var(--g600)">
+                    <div class="sell-line">
+                        <span>J'ajoute</span>
+                        <input type="number" class="input-field" id="raq" value="1" min="1" inputmode="numeric">
+                        <span>pièce(s) de <strong>${esc(p.name)}</strong> que je viens d'acheter à</span>
+                        <input type="number" class="input-field price-input" id="rap" placeholder="Prix" inputmode="numeric">
+                        <span class="input-suffix">FC</span>
+                        <button class="btn-check" id="rav">✓</button>
+                    </div>
+                </div>`;
+            }
+        });
+    }
+
+    app.innerHTML = `
+        <div class="section">
+            <div class="logo">${LOGO_SVG}<div class="logo-text">Plannie</div></div>
+            <div class="menu-header">
+                <button class="btn-restock" id="bRetour">↩&nbsp; Retourner au menu</button>
+            </div>
+            <div class="w-full">${items}</div>
+            ${_addingNewInRestock ? '' : '<button class="btn-end" id="bAddNew">➕&nbsp; Ajouter un article</button>'}
+        </div>`;
+
+    // ---- Wiring ----
+    document.getElementById('bRetour').onclick = () => {
+        _restockMode = false;
+        _restockingIdx = null;
+        _addingNewInRestock = false;
+        renderMainMenu();
+    };
+
+    if (_addingNewInRestock) {
+        document.getElementById('rn').focus();
+        document.getElementById('rnv').onclick = () => {
+            const name = document.getElementById('rn').value.trim();
+            const qty = parseInt(document.getElementById('rq').value);
+            const price = parseFloat(document.getElementById('rp').value);
+            if (!name) { showToast("Nom de l'article requis", 'loss'); return; }
+            if (!qty || qty < 1) { showToast("Quantité invalide", 'loss'); return; }
+            if (isNaN(price) || price < 0) { showToast("Prix invalide", 'loss'); return; }
+
+            const unitPrice = price / qty;
+            const newIdx = S.products.length;
+            S.products.push({
+                name, quantity: qty, purchasePrice: price, unitPrice,
+                batches: [{ quantity: qty, unitPrice, purchasePrice: price }]
+            });
+            S.sales[newIdx] = [];
+            S.productCount = S.products.length;
+            S.restocks.push({ productIdx: newIdx, quantity: qty, purchasePrice: price, unitPrice, isNewProduct: true });
+            saveState();
+
+            showToast(`Article "${name}" ajouté avec succès !`);
+            _addingNewInRestock = false;
+            renderRestockView();
+        };
+
+        ['rn','rq','rp'].forEach((id,idx,arr)=>{
+            const el = document.getElementById(id);
+            if(el) el.onkeydown = e => {
+                if(e.key==='Enter'){
+                    if(idx<arr.length-1) document.getElementById(arr[idx+1]).focus();
+                    else document.getElementById('rnv').click();
+                }
+            };
+        });
+    } else {
+        document.querySelectorAll('[data-ridx]').forEach(b => {
+            b.onclick = () => {
+                _restockingIdx = (_restockingIdx === parseInt(b.dataset.ridx)) ? null : parseInt(b.dataset.ridx);
+                renderRestockView();
+            };
+        });
+
+        if (_restockingIdx !== null) {
+            const rapEl = document.getElementById('rap');
+            if (rapEl) rapEl.focus();
+
+            const ravBtn = document.getElementById('rav');
+            if (ravBtn) ravBtn.onclick = () => {
+                const idx = _restockingIdx;
+                const qty = parseInt(document.getElementById('raq').value);
+                const price = parseFloat(document.getElementById('rap').value);
+                if (!qty || qty < 1) { showToast("Quantité invalide", 'loss'); return; }
+                if (isNaN(price) || price < 0) { showToast("Prix invalide", 'loss'); return; }
+
+                const p = S.products[idx];
+                const unitPrice = price / qty;
+                p.batches.push({ quantity: qty, unitPrice, purchasePrice: price });
+                p.quantity += qty;
+                p.purchasePrice += price;
+                p.unitPrice = p.purchasePrice / p.quantity;
+
+                S.restocks.push({ productIdx: idx, quantity: qty, purchasePrice: price, unitPrice, isNewProduct: false });
+                saveState();
+
+                showToast(`Stock de "${p.name}" mis à jour ! Les anciennes pièces seront écoulées en priorité (FIFO).`);
+                _restockingIdx = null;
+                renderRestockView();
+            };
+
+            const raqEl = document.getElementById('raq');
+            if (raqEl) raqEl.onkeydown = e => { if (e.key === 'Enter' && rapEl) rapEl.focus(); };
+            if (rapEl) rapEl.onkeydown = e => { if (e.key === 'Enter' && ravBtn) ravBtn.click(); };
+        }
+
+        const addNewBtn = document.getElementById('bAddNew');
+        if (addNewBtn) addNewBtn.onclick = () => {
+            _restockingIdx = null;
+            _addingNewInRestock = true;
+            renderRestockView();
+        };
+    }
+}
+
+// ================================================================
+//  REPORT
+// ================================================================
+function renderReport() {
+    const all = S.products.map((p,i) => ({
+        ...stats(i), name:p.name, idx:i,
+        unitPrice:p.unitPrice, purchasePrice:p.purchasePrice, quantity:p.quantity
+    }));
+
+    const totalCaisse = all.reduce((s,a) => s+a.rev, 0);
+
+    const profitable = all.filter(a => a.qtySold>0 && a.gain>0);
+    const sold = all.filter(a => a.qtySold>0);
+
+    const vert   = profitable.length ? profitable.reduce((a,b) => a.gain>b.gain?a:b) : null;
+    const dore   = profitable.length ? profitable.reduce((a,b) => a.pct>b.pct?a:b)   : null;
+    const orange = sold.length       ? sold.reduce((a,b) => a.gain<b.gain?a:b)        : null;
+    const rouge  = sold.length       ? sold.reduce((a,b) => a.pct<b.pct?a:b)          : null;
+
+    function rc(label, icon, art, css, type, delay){
+        if(!art) return `<div class="report-card report-none" style="animation-delay:${delay}s">
+            <div class="label">${icon} ${label}</div><div class="value">Aucun article éligible</div></div>`;
+        const det = type==='pct'
+            ? `Gain : ${formatPct(art.pct)} par rapport au prix d'achat unitaire`
+            : `Gain : ${formatFC(art.gain)}`;
+        return `<div class="report-card ${css}" style="animation-delay:${delay}s">
+            <div class="label">${icon} ${label}</div>
+            <div class="value">${esc(art.name)}</div>
+            <div class="detail">${det}</div></div>`;
+    }
+
+    app.innerHTML = `
+        <div class="report-section">
+            <div class="logo" style="margin-bottom:16px">${LOGO_SVG}
+                <div class="logo-text">Plannie</div>
+            </div>
+            <div class="report-title">📊 Rapport de la journée</div>
+            <div class="report-card report-caisse" style="animation-delay:.1s">
+                <div class="label">💰 Caisse totale du jour</div>
+                <div class="value">${formatFC(totalCaisse)}</div>
+            </div>
+            ${rc("Article Vert – Meilleur revenu (montant)","🟢",vert,"report-vert","amount",.2)}
+            ${rc("Article Doré – Meilleur revenu (pourcentage)","🏆",dore,"report-dore","pct",.3)}
+            ${rc("Article Orange – Plus faible revenu (montant)","🟠",orange,"report-orange","amount",.4)}
+            ${rc("Article Rouge – Plus faible revenu (pourcentage)","🔴",rouge,"report-rouge","pct",.5)}
+            <div style="text-align:center;margin-top:30px">
+                <button class="btn btn-primary" id="bnd">🌿&nbsp; Nouvelle journée</button>
+            </div>
+        </div>`;
+
+    // Snapshot before clearing
+    const snapshot = {
+        products: JSON.parse(JSON.stringify(S.products)),
+        sales: JSON.parse(JSON.stringify(S.sales)),
+        restocks: JSON.parse(JSON.stringify(S.restocks || []))
+    };
+
+    // Clear persisted data
+    clearState();
+
+    // Generate PDF via Android bridge
+    try {
+        generateAndroidPDF(snapshot, all, totalCaisse, vert, dore, orange, rouge);
+    } catch(e) {
+        console.error('Erreur PDF :', e);
+        showToast("Le PDF n'a pas pu être généré.", 'loss');
+    }
+
+    document.getElementById('bnd').onclick = () => {
+        S = freshState(); _sellingIdx=null; _confirming=false;
+        _restockMode=false; _restockingIdx=null; _addingNewInRestock=false;
+        render();
+    };
+}
+
+// ================================================================
+//  PDF GENERATION (Android Bridge)
+// ================================================================
+function generateAndroidPDF(snapshot, all, totalCaisse, vert, dore, orange, rouge) {
+    function fmtN(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+
+    // Build a structured JSON object for the Android side to render as PDF
+    const pdfData = {
+        date: new Date().toLocaleDateString('fr-FR'),
+        filename: 'Plannie_Rapport_' + new Date().toISOString().slice(0,10) + '.pdf',
+
+        // Section 1: Initial data
+        initialProducts: snapshot.products.map(p => ({
+            name: p.name,
+            quantity: p.batches[0].quantity,
+            purchasePrice: fmtN(p.batches[0].purchasePrice),
+            unitPrice: fmtN(p.batches[0].unitPrice)
+        })),
+
+        // Section 2: Restocks
+        restocks: (snapshot.restocks || []).map(r => ({
+            type: r.isNewProduct ? 'Nouvel article' : 'Ajout stock',
+            name: r.productIdx < snapshot.products.length ? snapshot.products[r.productIdx].name : '?',
+            quantity: r.quantity,
+            purchasePrice: fmtN(r.purchasePrice),
+            unitPrice: fmtN(r.unitPrice)
+        })),
+
+        // Section 3: Sales
+        salesByProduct: snapshot.products.map((p, i) => {
+            const sales = snapshot.sales[i] || [];
+            return {
+                name: p.name,
+                sales: sales.map((s, si) => {
+                    let cost = 0;
+                    if (s.batchConsumptions) {
+                        s.batchConsumptions.forEach(bc => { cost += bc.qty * bc.unitPrice; });
+                    } else {
+                        cost = p.batches[0].unitPrice * s.quantity;
+                    }
+                    const g = s.price - cost;
+                    return {
+                        num: si + 1,
+                        quantity: s.quantity,
+                        salePrice: fmtN(s.price),
+                        fifoCost: fmtN(cost),
+                        gainLoss: (g >= 0 ? '+' : '') + fmtN(g)
+                    };
+                })
+            };
+        }),
+
+        // Section 4: Summary
+        totalCaisse: fmtN(totalCaisse),
+        articleVert: vert ? { name: vert.name, gain: fmtN(vert.gain) } : null,
+        articleDore: dore ? { name: dore.name, pct: dore.pct.toFixed(1) } : null,
+        articleOrange: orange ? { name: orange.name, gain: fmtN(orange.gain) } : null,
+        articleRouge: rouge ? { name: rouge.name, pct: rouge.pct.toFixed(1) } : null
+    };
+
+    // Send to Android via JavaScript interface
+    if (window.PlannieBridge && window.PlannieBridge.generatePDF) {
+        window.PlannieBridge.generatePDF(JSON.stringify(pdfData));
+    } else {
+        console.log('PlannieBridge not available, PDF data:', JSON.stringify(pdfData));
+        showToast("PDF non disponible dans ce mode.", 'info');
+    }
+}
+
+// Called from Android after PDF is saved
+function onPdfSaved(path) {
+    showToast('📄 Rapport PDF téléchargé avec succès ! Consultez-le dès maintenant.');
+}
+
+function onPdfError(msg) {
+    showToast("Erreur PDF : " + msg, 'loss');
+}
+
+// ================================================================
+//  INIT
+// ================================================================
+render();
+</script>
+</body>
+</html>
